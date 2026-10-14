@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /_removed/
+
+Sitemap: https://www.techcaressolutions.com/sitemap.xml
