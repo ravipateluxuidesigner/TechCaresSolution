@@ -381,16 +381,16 @@
 (function () {
   var form = document.querySelector("[data-lead-form]");
   if (!form) return;
-  var PHONE = "917645839971";
+  var PHONE = "918953452487";
   var btn = form.querySelector("[data-lead-submit]");
   var label = form.querySelector("[data-lead-label]");
   var status = form.querySelector("[data-lead-status]");
   var note = form.querySelector("[data-lead-note]");
   var idle = label.textContent, busy = false, unlockTimer = null;
 
-  /* arriving from a practice page (index.html?interest=it#get-started) preselects that practice */
+  /* arriving with ?interest=design|dev|unsure preselects that option */
   try {
-    var want = { healthcare: "Healthcare Solutions", it: "IT Solutions", both: "Both" }[new URLSearchParams(location.search).get("interest")];
+    var want = { design: "Product & UX Design", dev: "Web & App Development", unsure: "Not sure yet" }[new URLSearchParams(location.search).get("interest")];
     if (want) Array.prototype.forEach.call(form.elements.interest, function (r) { if (r.value === want) r.checked = true; });
   } catch (e) {}
 
@@ -405,7 +405,7 @@
     if (key === "interest") wrap.setAttribute("aria-invalid", msg ? "true" : "false");
   };
   var check = {
-    interest: function () { return form.elements.interest.value ? "" : "Choose Healthcare, IT, or both."; },
+    interest: function () { return form.elements.interest.value ? "" : "Choose what you need help with."; },
     name: function () { return form.elements.name.value.trim() ? "" : "Enter your name."; },
     email: function () {
       var v = form.elements.email.value.trim();
@@ -476,3 +476,175 @@
   form.addEventListener("input", function () { if (!busy) label.textContent = idle; });
 })();
 
+
+/* services rail: previous / next buttons scroll the cards */
+(function () {
+  var track = document.getElementById("svtrack");
+  if (!track) return;
+  Array.prototype.forEach.call(document.querySelectorAll("[data-sv]"), function (b) {
+    b.addEventListener("click", function () {
+      var card = track.querySelector(".cl-sv-c");
+      var step = card ? card.getBoundingClientRect().width + 16 : 320;
+      track.scrollBy({ left: Number(b.getAttribute("data-sv")) * step, behavior: "smooth" });
+    });
+  });
+})();
+
+/* services rail: click-and-drag to scroll with a mouse */
+(function () {
+  var t = document.getElementById("svtrack");
+  if (!t) return;
+  var down = false, sx = 0, sl = 0, moved = false;
+  t.addEventListener("pointerdown", function (e) {
+    if (e.pointerType !== "mouse") return;
+    down = true; moved = false; sx = e.clientX; sl = t.scrollLeft;
+  });
+  window.addEventListener("pointermove", function (e) {
+    if (!down) return;
+    var dx = e.clientX - sx;
+    if (!moved && Math.abs(dx) > 5) { moved = true; t.classList.add("is-drag"); }
+    if (moved) t.scrollLeft = sl - dx;
+  });
+  window.addEventListener("pointerup", function () {
+    if (!down) return;
+    down = false;
+    if (moved) setTimeout(function () { t.classList.remove("is-drag"); }, 0);
+  });
+  t.addEventListener("click", function (e) { if (moved) { e.preventDefault(); moved = false; } }, true);
+})();
+
+/* "Start a project" opens a modal enquiry form (name, phone, email, requirement).
+   There is no server, so, like the page forms, it opens WhatsApp with the message ready to send. */
+(function () {
+  var PHONE = "918953452487";
+  var triggers = Array.prototype.filter.call(document.querySelectorAll('a[href$="contact.html#enquiry"]'), function (a) {
+    return /^\s*(Start a project|Book a free consultation|Enquire about)/i.test(a.textContent);
+  });
+  if (!triggers.length || typeof HTMLDialogElement === "undefined") return;
+
+  var pageService = /service-|healthcare-/.test(location.pathname) ? document.title.split("|")[0].trim() : (/healthcare/.test(location.pathname) ? "Healthcare Solutions" : "");
+  var service = pageService;
+  var dlg = document.createElement("dialog");
+  dlg.className = "cl-md";
+  dlg.setAttribute("aria-labelledby", "mdTitle");
+  dlg.innerHTML =
+    '<div class="cl-md-in">' +
+    '<button type="button" class="cl-md-x" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
+    '<div class="cl-md-form">' +
+    '<h2 id="mdTitle">Start a project</h2>' +
+    '<p class="cl-md-sub">Tell us a little about you and what you need. We will come back with a clear plan.</p>' +
+    '<form novalidate>' +
+    '<div class="cl-md-f"><label for="mdName">Full name</label><input id="mdName" name="name" type="text" autocomplete="name" placeholder="Jane Doe" required /><p class="cl-md-e" hidden></p></div>' +
+    '<div class="cl-md-row">' +
+    '<div class="cl-md-f"><label for="mdPhone">Contact number</label><input id="mdPhone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+91 98765 43210" required /><p class="cl-md-e" hidden></p></div>' +
+    '<div class="cl-md-f"><label for="mdEmail">Email</label><input id="mdEmail" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" placeholder="jane@company.com" required /><p class="cl-md-e" hidden></p></div>' +
+    '</div>' +
+    '<div class="cl-md-f"><label for="mdReq">Your requirement</label><textarea id="mdReq" name="req" rows="4" placeholder="What are you building, and how can we help?" required></textarea><p class="cl-md-e" hidden></p></div>' +
+    '<button type="submit" class="cl-md-go"><span>Send enquiry</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>' +
+    '<p class="cl-md-note">Your details are sent securely to our team. We will never share them.</p>' +
+    '</form></div>' +
+    '<div class="cl-md-done" hidden><h2>Thank you!</h2><p>Your enquiry has been submitted.</p><p><a class="cl-md-wa" target="_blank" rel="noopener" hidden>Open WhatsApp</a></p><button type="button" class="cl-md-close">Close</button></div>' +
+    '</div>';
+  document.body.appendChild(dlg);
+
+  var form = dlg.querySelector("form");
+  var formWrap = dlg.querySelector(".cl-md-form");
+  var done = dlg.querySelector(".cl-md-done");
+  var waLink = dlg.querySelector(".cl-md-wa");
+  var lastFocus = null;
+
+  function fieldOf(name) { return form.elements[name].closest(".cl-md-f"); }
+  function setErr(name, msg) {
+    var wrap = fieldOf(name), p = wrap.querySelector(".cl-md-e");
+    p.textContent = msg || ""; p.hidden = !msg;
+    wrap.classList.toggle("is-bad", !!msg);
+    form.elements[name].setAttribute("aria-invalid", msg ? "true" : "false");
+  }
+  var rules = {
+    name: function (v) { return v.length >= 2 ? "" : "Enter your name."; },
+    phone: function (v) { var d = v.replace(/\D/g, ""); return /^[+()\d][\d\s().-]*$/.test(v) && d.length >= 7 && d.length <= 15 ? "" : "Enter a valid contact number."; },
+    email: function (v) { return /^\S+@\S+\.\S+$/.test(v) ? "" : "Enter a valid email, like jane@company.com."; },
+    req: function (v) { return v.length >= 5 ? "" : "Tell us briefly what you need."; }
+  };
+  ["name", "phone", "email", "req"].forEach(function (k) {
+    form.elements[k].addEventListener("input", function () { if (fieldOf(k).classList.contains("is-bad")) setErr(k, rules[k](form.elements[k].value.trim())); });
+  });
+
+  function open(e) {
+    if (e) e.preventDefault();
+    var t = e && e.currentTarget;
+    service = (t && t.getAttribute("data-service")) || pageService;
+    dlg.querySelector("#mdTitle").textContent = (t && t.getAttribute("data-md-title")) || "Start a project";
+    lastFocus = document.activeElement;
+    formWrap.hidden = false; done.hidden = true;
+    var nt = form.querySelector(".cl-md-note"); if (nt) { nt.textContent = "Your details are sent securely to our team. We will never share them."; nt.style.color = ""; }
+    document.documentElement.classList.add("cl-md-open");
+    if (!dlg.open) dlg.showModal();
+    setTimeout(function () { form.elements.name.focus(); }, 30);
+  }
+  function close() { if (dlg.open) dlg.close(); }
+  dlg.addEventListener("close", function () {
+    document.documentElement.classList.remove("cl-md-open");
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  });
+  dlg.addEventListener("click", function (e) { if (e.target === dlg) close(); });
+  dlg.querySelector(".cl-md-x").addEventListener("click", close);
+  dlg.querySelector(".cl-md-close").addEventListener("click", function () { form.reset(); close(); });
+  triggers.forEach(function (a) { a.addEventListener("click", open); });
+
+  var MAIL_ENDPOINT = "https://formsubmit.co/ajax/ravi.uxuidesigner@gmail.com";
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var bad = null;
+    ["name", "phone", "email", "req"].forEach(function (k) {
+      var msg = rules[k](form.elements[k].value.trim());
+      setErr(k, msg);
+      if (msg && !bad) bad = k;
+    });
+    if (bad) { form.elements[bad].focus(); return; }
+    var v = function (k) { return form.elements[k].value.trim(); };
+    var btn = form.querySelector(".cl-md-go"), lab = btn.querySelector("span"), orig = lab.textContent;
+    var note = form.querySelector(".cl-md-note");
+    if (btn.disabled) return;
+    btn.disabled = true; lab.textContent = "Sending…";
+    var payload = {
+      _subject: "New enquiry from techcares website" + (service ? " - " + service : ""),
+      _template: "table", _captcha: "false",
+      Name: v("name"), Phone: v("phone"), Email: v("email"), Service: service || "General enquiry",
+      Requirement: v("req"), Page: location.href
+    };
+    var text = "Hi TechCares, I'm " + v("name") + " (phone: " + v("phone") + ", email: " + v("email") + ")." +
+      (service ? " Service: " + service + "." : "") + " Requirement: " + v("req");
+    waLink.href = "https://wa.me/" + PHONE + "?text=" + encodeURIComponent(text);
+    fetch(MAIL_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) {
+      if (!r.ok || j.success === "false" || j.success === false) throw new Error(j.message || "send failed");
+    }); }).then(function () {
+      done.querySelector("h2").textContent = "Thank you, " + v("name").split(" ")[0] + "!";
+      done.querySelector("p").textContent = "Your enquiry has been submitted. Our team will get back to you shortly on " + v("email") + " or " + v("phone") + ".";
+      waLink.hidden = true; waLink.parentNode.hidden = true;
+      form.reset();
+      formWrap.hidden = true; done.hidden = false;
+      done.classList.remove("is-err");
+    }).catch(function (err) {
+      var why = location.protocol === "file:" ? "This page is opened as a local file; open it through a web server or the live site." : (err && err.message && err.message !== "send failed" && err.message !== "Failed to fetch" ? err.message : "");
+      if (note) { note.textContent = "Sorry, we couldn't send your enquiry just now. " + why + " You can also message us on WhatsApp."; note.style.color = "#b42318"; }
+    }).then(function () { btn.disabled = false; lab.textContent = orig; });
+  });
+})();
+
+/* Floating WhatsApp button */
+(function () {
+  if (document.querySelector(".cl-fwa")) return;
+  var a = document.createElement("a");
+  a.className = "cl-fwa";
+  a.href = "https://wa.me/918953452487";
+  a.target = "_blank";
+  a.rel = "noopener";
+  a.setAttribute("aria-label", "Chat with TechCares on WhatsApp (opens in a new tab)");
+  a.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2a9.9 9.9 0 00-8.5 14.9L2 22l5.25-1.37A9.9 9.9 0 1012.04 2zm0 1.8a8.1 8.1 0 11-4.3 15l-.3-.19-3.1.81.83-3.03-.2-.31A8.1 8.1 0 0112.04 3.8zm-3.1 4.1c-.17 0-.45.06-.69.32-.24.26-.9.88-.9 2.15 0 1.26.92 2.48 1.05 2.65.13.17 1.8 2.86 4.45 3.9 2.2.87 2.65.7 3.12.66.48-.04 1.54-.63 1.76-1.24.22-.6.22-1.13.15-1.24-.06-.11-.24-.17-.5-.3-.26-.13-1.54-.76-1.78-.85-.24-.09-.41-.13-.59.13-.17.26-.67.85-.82 1.02-.15.17-.3.2-.57.07-.26-.13-1.1-.4-2.1-1.3-.78-.69-1.3-1.55-1.45-1.81-.15-.26-.02-.4.11-.53.12-.12.26-.3.39-.46.13-.15.17-.26.26-.43.09-.17.04-.33-.02-.46-.07-.13-.59-1.42-.8-1.94-.21-.5-.43-.43-.59-.44h-.5z"/></svg>';
+  document.body.appendChild(a);
+})();

@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://www.techcaressolutions.com/</loc><lastmod>2026-10-14</lastmod><priority>1.0</priority></url>
-  <url><loc>https://www.techcaressolutions.com/about.html</loc><lastmod>2026-10-14</lastmod><priority>0.8</priority></url>
-  <url><loc>https://www.techcaressolutions.com/overview.html</loc><lastmod>2026-10-14</lastmod><priority>0.8</priority></url>
-  <url><loc>https://www.techcaressolutions.com/healthcare-solutions.html</loc><lastmod>2026-10-14</lastmod><priority>0.8</priority></url>
-  <url><loc>https://www.techcaressolutions.com/it-solutions.html</loc><lastmod>2026-10-14</lastmod><priority>0.8</priority></url>
-  <url><loc>https://www.techcaressolutions.com/contact.html</loc><lastmod>2026-10-14</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.techcaressolutions.com/</loc><lastmod>2026-10-20</lastmod><priority>1.0</priority></url>
+  <url><loc>https://www.techcaressolutions.com/services.html</loc><lastmod>2026-10-20</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.techcaressolutions.com/service-branding.html</loc><lastmod>2026-10-20</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.techcaressolutions.com/service-websites.html</loc><lastmod>2026-10-20</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.techcaressolutions.com/service-digital-products.html</loc><lastmod>2026-10-20</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.techcaressolutions.com/service-cx-strategy.html</loc><lastmod>2026-10-20</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.techcaressolutions.com/service-content.html</loc><lastmod>2026-10-20</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.techcaressolutions.com/service-development.html</loc><lastmod>2026-10-20</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.techcaressolutions.com/about.html</loc><lastmod>2026-10-20</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.techcaressolutions.com/contact.html</loc><lastmod>2026-10-20</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.techcaressolutions.com/healthcare.html</loc><lastmod>2026-10-22</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.techcaressolutions.com/healthcare-scribing.html</loc><lastmod>2026-10-22</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.techcaressolutions.com/healthcare-pre-charting.html</loc><lastmod>2026-10-22</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.techcaressolutions.com/healthcare-virtual-assistant.html</loc><lastmod>2026-10-22</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.techcaressolutions.com/healthcare-chronic-care.html</loc><lastmod>2026-10-22</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.techcaressolutions.com/healthcare-medical-coding.html</loc><lastmod>2026-10-22</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.techcaressolutions.com/healthcare-datascribing.html</loc><lastmod>2026-10-22</lastmod><priority>0.8</priority></url>
 </urlset>
